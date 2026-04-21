@@ -39,7 +39,3 @@ packages/
       ...
     README.md
 ```
-
-## Nexus integration
-
-Nexus resolves these MCPs by cloning this repo at a pinned ref. See `NEXUS_MCPS_EXTERNAL_REPO` / `NEXUS_MCPS_EXTERNAL_REF` in the Nexus backend config.
