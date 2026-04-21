@@ -1,0 +1,19 @@
+{
+  "name": "@vbss/mcp-excel",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MCP server for reading and writing Excel files (.xlsx)",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "mcp": {
+    "label": "Excel",
+    "toolPattern": "mcp__excel__*"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.17.4",
+    "xlsx": "^0.18.5",
+    "zod": "^3.22.4"
+  }
+}

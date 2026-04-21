@@ -1,0 +1,16 @@
+{
+  "name": "vbss-mcps",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Public, reusable MCP servers by VBSS.",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "install:all": "npm install",
+    "list": "npm ls --workspaces --depth=0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

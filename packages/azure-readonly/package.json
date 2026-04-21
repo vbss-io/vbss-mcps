@@ -1,0 +1,25 @@
+{
+  "name": "@vbss/mcp-azure-readonly",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Read-only multi-org Azure MCP server for resource inventory, costs, and metrics",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "mcp": {
+    "label": "Azure Read-Only",
+    "toolPattern": "mcp__azure-readonly__*"
+  },
+  "dependencies": {
+    "@azure/arm-costmanagement": "1.0.0-beta.2",
+    "@azure/arm-monitor": "^7.0.0",
+    "@azure/arm-resourcegraph": "^4.2.1",
+    "@azure/arm-resources": "^7.0.0",
+    "@azure/arm-subscriptions": "^5.1.1",
+    "@azure/identity": "^4.5.0",
+    "@modelcontextprotocol/sdk": "^1.17.4",
+    "dotenv": "^16.4.7",
+    "zod": "^3.22.4"
+  }
+}
