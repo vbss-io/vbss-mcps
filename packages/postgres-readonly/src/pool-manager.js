@@ -37,7 +37,7 @@ export class PoolManager {
       user: config.user,
       password: config.password,
       database: db,
-      ssl: config.ssl ? { rejectUnauthorized: false } : false,
+      ssl: config.ssl ? { rejectUnauthorized: config.sslVerify } : false,
       max: 3,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 10000,

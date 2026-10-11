@@ -2,31 +2,43 @@
 
 MCP server para ler e escrever arquivos Excel (.xlsx). Funciona com arquivos existentes e cria novos.
 
-## Setup
+## Uso via npx
 
-```bash
-cd apps/mcps/excel
-npm install
-```
+Não precisa clonar nem instalar: o cliente MCP baixa e roda o pacote com `npx`. Requer Node.js 20 ou superior.
 
-## Registrar no Claude Code
-
-Edite o `.claude.json` e adicione em `mcpServers`:
+Adicione no `.mcp.json` do projeto (ou no `~/.claude.json`):
 
 ```json
 {
-  "excel": {
-    "type": "stdio",
-    "command": "node",
-    "args": [
-      "C:/caminho/completo/apps/mcps/excel/src/index.js"
-    ],
-    "env": {}
+  "mcpServers": {
+    "excel": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@vbss-ai/mcp-excel"
+      ]
+    }
   }
 }
 ```
 
-> **Importante**: Não use `claude mcp add` com paths que contenham espaços. Edite o JSON diretamente.
+No Windows, use `"command": "cmd"` e `"args": ["/c", "npx", "-y", "@vbss-ai/mcp-excel"]`.
+
+Verifique a conexão:
+
+```bash
+claude mcp list
+```
+
+## Rodando a partir do código
+
+```bash
+git clone https://github.com/vbss-io/vbss-mcps.git
+cd vbss-mcps
+npm install
+node packages/excel/src/index.js
+```
 
 ## Tools disponíveis
 

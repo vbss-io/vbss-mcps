@@ -31,6 +31,7 @@ export class ClientManager {
       maxPoolSize: 3,
       serverSelectionTimeoutMS: 10000,
       connectTimeoutMS: 10000,
+      ...(config.tlsAllowInvalidCertificates && { tlsAllowInvalidCertificates: true }),
     });
     await client.connect();
     this.clients.set(orgKey, client);

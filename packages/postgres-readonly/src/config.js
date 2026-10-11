@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: resolve(__dirname, "..", ".env") });
+dotenv.config({ path: resolve(__dirname, "..", ".env"), quiet: true });
 
 function parsePostgresUrl(url) {
   const parsed = new URL(url);
@@ -13,7 +13,7 @@ function parsePostgresUrl(url) {
     user: decodeURIComponent(parsed.username),
     password: decodeURIComponent(parsed.password),
     database: parsed.pathname.replace(/^\//, "") || "postgres",
-    ssl: parsed.searchParams.get("sslmode") === "require",
+    ssl: ["require", "verify-ca", "verify-full"].includes(parsed.searchParams.get("sslmode")),
   };
 }
 
@@ -38,9 +38,10 @@ export function loadOrganizations() {
     const prefix = `PG_${key.toUpperCase()}_`;
     const url = process.env[`${prefix}URL`];
     const label = process.env[`${prefix}LABEL`] || key;
+    const sslVerify = process.env[`${prefix}SSL_VERIFY`] !== "false";
     if (url) {
       const parsed = parsePostgresUrl(url);
-      organizations.set(key, { key, label, ...parsed });
+      organizations.set(key, { key, label, ...parsed, sslVerify });
       continue;
     }
     const host = process.env[`${prefix}HOST`];
@@ -54,7 +55,7 @@ export function loadOrganizations() {
         `Organization "${key}" requires either ${prefix}URL or at minimum ${prefix}HOST and ${prefix}USER`
       );
     }
-    organizations.set(key, { key, label, host, port, user, password, database, ssl });
+    organizations.set(key, { key, label, host, port, user, password, database, ssl, sslVerify });
   }
   return organizations;
 }

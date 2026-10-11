@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: resolve(__dirname, "..", ".env") });
+dotenv.config({ path: resolve(__dirname, "..", ".env"), quiet: true });
 
 export function loadOrganizations() {
   const orgsEnv = process.env.MONGO_ORGS;
@@ -26,10 +26,11 @@ export function loadOrganizations() {
     const prefix = `MONGO_${key.toUpperCase()}_`;
     const url = process.env[`${prefix}URL`];
     const label = process.env[`${prefix}LABEL`] || key;
+    const tlsAllowInvalidCertificates = process.env[`${prefix}TLS_VERIFY`] === "false";
     if (url) {
       const parsed = new URL(url);
       const database = parsed.pathname.replace(/^\//, "") || "test";
-      organizations.set(key, { key, label, url, database });
+      organizations.set(key, { key, label, url, database, tlsAllowInvalidCertificates });
       continue;
     }
     const host = process.env[`${prefix}HOST`];
@@ -45,12 +46,12 @@ export function loadOrganizations() {
       );
     }
     const userPart = user ? `${encodeURIComponent(user)}:${encodeURIComponent(password)}@` : "";
-    const tlsParam = tls ? "tls=true&tlsAllowInvalidCertificates=true" : "";
+    const tlsParam = tls ? "tls=true" : "";
     const authParam = user ? `authSource=${authSource}` : "";
     const params = [tlsParam, authParam].filter(Boolean).join("&");
     const query = params ? `?${params}` : "";
     const builtUrl = `mongodb://${userPart}${host}:${port}/${database}${query}`;
-    organizations.set(key, { key, label, url: builtUrl, database });
+    organizations.set(key, { key, label, url: builtUrl, database, tlsAllowInvalidCertificates });
   }
   return organizations;
 }

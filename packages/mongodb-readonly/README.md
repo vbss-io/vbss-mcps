@@ -2,20 +2,43 @@
 
 MCP server read-only multi-org para MongoDB (e Cosmos DB MongoDB API). Permite explorar databases, collections e executar queries `find`/`aggregate` em diferentes organizações.
 
-## Setup
+## Uso via npx
 
-```bash
-cd packages/mongodb-readonly
-npm install
+Não precisa clonar nem instalar: o cliente MCP baixa e roda o pacote com `npx`. Requer Node.js 20 ou superior.
+
+Adicione no `.mcp.json` do projeto (ou no `~/.claude.json`):
+
+```json
+{
+  "mcpServers": {
+    "mongodb-readonly": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@vbss-ai/mcp-mongodb-readonly"
+      ],
+      "env": {
+        "MONGO_ORGS": "acme",
+        "MONGO_ACME_URL": "mongodb://readonly:senha@db.acme.com:27017/mydb?authSource=admin",
+        "MONGO_ACME_LABEL": "Acme Corp"
+      }
+    }
+  }
+}
 ```
 
-Crie o arquivo `.env` baseado no exemplo:
+No Windows, use `"command": "cmd"` e `"args": ["/c", "npx", "-y", "@vbss-ai/mcp-mongodb-readonly"]`.
+
+Verifique a conexão:
 
 ```bash
-cp .env.example .env
+claude mcp list
 ```
 
-Configure as organizações no `.env`:
+## Configuração
+
+As variáveis vão no `env` do cliente MCP:
 
 ```env
 MONGO_ORGS=acme,globex
@@ -40,30 +63,20 @@ MONGO_MAX_DOCS=500
 
 > `DATABASE` é opcional (default: `test`). Use a tool `list_databases` para descobrir bancos disponíveis e passe o parâmetro `database` em qualquer tool.
 
-## Registrar no Claude Code
+Use um usuário de banco só leitura. A validação de queries do servidor é uma segunda camada, não substitui a permissão no banco.
 
-Edite o `.claude.json` (global ou do projeto) e adicione em `mcpServers`:
+O certificado TLS é verificado por padrão. Se o servidor usa uma CA própria, aponte o certificado dela com `NODE_EXTRA_CA_CERTS` no `env`. Só em último caso desligue a verificação com `MONGO_<ORG>_TLS_VERIFY=false`.
 
-```json
-{
-  "mongodb-readonly": {
-    "type": "stdio",
-    "command": "node",
-    "args": [
-      "C:/caminho/completo/packages/mongodb-readonly/src/index.js"
-    ],
-    "env": {}
-  }
-}
-```
-
-> **Importante**: Não use `claude mcp add` com paths que contenham espaços — o Git Bash pode quebrar o caminho. Edite o JSON diretamente.
-
-Verifique a conexão:
+## Rodando a partir do código
 
 ```bash
-claude mcp list
+git clone https://github.com/vbss-io/vbss-mcps.git
+cd vbss-mcps
+npm install
+node packages/mongodb-readonly/src/index.js
 ```
+
+Rodando do clone, as variáveis também podem ficar num `.env` em `packages/mongodb-readonly`.
 
 ## Tools disponíveis
 

@@ -2,20 +2,46 @@
 
 MCP server read-only multi-org para Azure. Permite inventariar recursos, consultar custos e métricas de performance em diferentes organizações.
 
-## Setup
+## Uso via npx
 
-```bash
-cd apps/mcps/azure-readonly
-npm install
+Não precisa clonar nem instalar: o cliente MCP baixa e roda o pacote com `npx`. Requer Node.js 22 ou superior.
+
+Adicione no `.mcp.json` do projeto (ou no `~/.claude.json`):
+
+```json
+{
+  "mcpServers": {
+    "azure-readonly": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@vbss-ai/mcp-azure-readonly"
+      ],
+      "env": {
+        "AZURE_ORGS": "acme",
+        "AZURE_ACME_TENANT_ID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "AZURE_ACME_CLIENT_ID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "AZURE_ACME_CLIENT_SECRET": "your-client-secret",
+        "AZURE_ACME_SUBSCRIPTION_ID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "AZURE_ACME_LABEL": "Acme Corp"
+      }
+    }
+  }
+}
 ```
 
-Crie o `.env` baseado no exemplo:
+No Windows, use `"command": "cmd"` e `"args": ["/c", "npx", "-y", "@vbss-ai/mcp-azure-readonly"]`.
+
+Verifique a conexão:
 
 ```bash
-cp .env.example .env
+claude mcp list
 ```
 
-Configure as organizações:
+## Configuração
+
+As variáveis vão no `env` do cliente MCP:
 
 ```env
 AZURE_ORGS=acme,globex
@@ -35,30 +61,16 @@ O App Registration precisa dos seguintes roles na subscription:
 - **Cost Management Reader** — consulta de custos
 - **Monitoring Reader** — métricas de performance
 
-## Registrar no Claude Code
-
-Edite o `.claude.json` (global ou do projeto) e adicione em `mcpServers`:
-
-```json
-{
-  "azure-readonly": {
-    "type": "stdio",
-    "command": "node",
-    "args": [
-      "C:/caminho/completo/apps/mcps/azure-readonly/src/index.js"
-    ],
-    "env": {}
-  }
-}
-```
-
-> **Importante**: Não use `claude mcp add` com paths que contenham espaços. Edite o JSON diretamente.
-
-Verifique a conexão:
+## Rodando a partir do código
 
 ```bash
-claude mcp list
+git clone https://github.com/vbss-io/vbss-mcps.git
+cd vbss-mcps
+npm install
+node packages/azure-readonly/src/index.js
 ```
+
+Rodando do clone, as variáveis também podem ficar num `.env` em `packages/azure-readonly`.
 
 ## Tools disponíveis
 

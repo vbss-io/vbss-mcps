@@ -48,6 +48,14 @@ async function withRetry(fn, retries = 2) {
   }
 }
 
+// The Query API answers 400 "timeframe TheLastMonth is currently not supported", so it is sent as Custom.
+function previousMonth(now = new Date()) {
+  return {
+    from: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1)),
+    to: new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 0, 23, 59, 59)),
+  };
+}
+
 function buildCostQuery({ timeframe, startDate, endDate, granularity, groupBy, filterDimension, filterValues }) {
   const dataset = {
     granularity: granularity || "None",
@@ -68,6 +76,9 @@ function buildCostQuery({ timeframe, startDate, endDate, granularity, groupBy, f
       },
     };
   }
+  if (timeframe === "TheLastMonth") {
+    return { type: "Usage", timeframe: "Custom", timePeriod: previousMonth(), dataset };
+  }
   const queryDef = { type: "Usage", timeframe: timeframe || "MonthToDate", dataset };
   if ((timeframe === "Custom") && startDate && endDate) {
     queryDef.timePeriod = { from: new Date(startDate), to: new Date(endDate) };
@@ -75,7 +86,7 @@ function buildCostQuery({ timeframe, startDate, endDate, granularity, groupBy, f
   return queryDef;
 }
 
-function parseCostResult(result) {
+function parseCostResult(result = {}) {
   const columns = (result.columns || []).map((c) => c.name);
   const rows = (result.rows || []).map((row) => {
     const obj = {};

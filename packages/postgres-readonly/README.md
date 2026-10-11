@@ -2,20 +2,43 @@
 
 MCP server read-only multi-org para PostgreSQL. Permite explorar databases, schemas, tabelas e executar queries SELECT em diferentes organizações.
 
-## Setup
+## Uso via npx
 
-```bash
-cd apps/mcps/postgres-readonly
-npm install
+Não precisa clonar nem instalar: o cliente MCP baixa e roda o pacote com `npx`. Requer Node.js 20 ou superior.
+
+Adicione no `.mcp.json` do projeto (ou no `~/.claude.json`):
+
+```json
+{
+  "mcpServers": {
+    "postgres-readonly": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@vbss-ai/mcp-postgres-readonly"
+      ],
+      "env": {
+        "PG_ORGS": "acme",
+        "PG_ACME_URL": "postgres://readonly:senha@db.acme.com:5432/postgres",
+        "PG_ACME_LABEL": "Acme Corp"
+      }
+    }
+  }
+}
 ```
 
-Crie o arquivo `.env` baseado no exemplo:
+No Windows, use `"command": "cmd"` e `"args": ["/c", "npx", "-y", "@vbss-ai/mcp-postgres-readonly"]`.
+
+Verifique a conexão:
 
 ```bash
-cp .env.example .env
+claude mcp list
 ```
 
-Configure as organizações no `.env`:
+## Configuração
+
+As variáveis vão no `env` do cliente MCP:
 
 ```env
 PG_ORGS=acme,globex
@@ -35,30 +58,20 @@ PG_GLOBEX_SSL=true
 
 > `DATABASE` é opcional (default: `postgres`). Use a tool `list_databases` para descobrir os bancos disponíveis e passe o parâmetro `database` em qualquer tool.
 
-## Registrar no Claude Code
+Use um usuário de banco só leitura. A validação de queries do servidor é uma segunda camada, não substitui a permissão no banco.
 
-Edite o `.claude.json` (global ou do projeto) e adicione em `mcpServers`:
+TLS liga com `sslmode=require`, `verify-ca` ou `verify-full` na URL, ou com `PG_<ORG>_SSL=true`. O certificado é verificado por padrão. Se o servidor usa uma CA própria, aponte o certificado dela com `NODE_EXTRA_CA_CERTS` no `env`. Só em último caso desligue a verificação com `PG_<ORG>_SSL_VERIFY=false`.
 
-```json
-{
-  "postgres-readonly": {
-    "type": "stdio",
-    "command": "node",
-    "args": [
-      "C:/caminho/completo/apps/mcps/postgres-readonly/src/index.js"
-    ],
-    "env": {}
-  }
-}
-```
-
-> **Importante**: Não use `claude mcp add` com paths que contenham espaços — o Git Bash pode quebrar o caminho. Edite o JSON diretamente.
-
-Verifique a conexão:
+## Rodando a partir do código
 
 ```bash
-claude mcp list
+git clone https://github.com/vbss-io/vbss-mcps.git
+cd vbss-mcps
+npm install
+node packages/postgres-readonly/src/index.js
 ```
+
+Rodando do clone, as variáveis também podem ficar num `.env` em `packages/postgres-readonly`.
 
 ## Tools disponíveis
 
