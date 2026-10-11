@@ -62,16 +62,46 @@ Use um usuário de banco só leitura. A validação de queries do servidor é um
 
 TLS liga com `sslmode=require`, `verify-ca` ou `verify-full` na URL, ou com `PG_<ORG>_SSL=true`. O certificado é verificado por padrão. Se o servidor usa uma CA própria, aponte o certificado dela com `NODE_EXTRA_CA_CERTS` no `env`. Só em último caso desligue a verificação com `PG_<ORG>_SSL_VERIFY=false`.
 
-## Rodando a partir do código
+## Alternativa: usar a partir do clone
+
+Para rodar sem o npm, por exemplo para testar uma mudança no código, clone o repositório e instale as dependências:
 
 ```bash
 git clone https://github.com/vbss-io/vbss-mcps.git
 cd vbss-mcps
 npm install
-node packages/postgres-readonly/src/index.js
 ```
 
-Rodando do clone, as variáveis também podem ficar num `.env` em `packages/postgres-readonly`.
+Depois aponte o cliente MCP para o arquivo do servidor, usando o caminho absoluto do clone:
+
+```json
+{
+  "mcpServers": {
+    "postgres-readonly": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/caminho/para/vbss-mcps/packages/postgres-readonly/src/index.js"
+      ],
+      "env": {
+        "PG_ORGS": "acme",
+        "PG_ACME_URL": "postgres://readonly:senha@db.acme.com:5432/postgres",
+        "PG_ACME_LABEL": "Acme Corp"
+      }
+    }
+  }
+}
+```
+
+No Windows, use barras normais no caminho (`C:/Users/voce/vbss-mcps/...`). Se o caminho tiver espaços, edite o JSON direto em vez de usar `claude mcp add`.
+
+As variáveis podem ficar no `env` acima ou num arquivo `.env` em `packages/postgres-readonly`, que o servidor lê ao iniciar.
+
+Para conferir que a configuração carrega sem erro, rode direto no terminal. O servidor fica em silêncio esperando o cliente; `Ctrl+C` encerra.
+
+```bash
+node packages/postgres-readonly/src/index.js
+```
 
 ## Tools disponíveis
 

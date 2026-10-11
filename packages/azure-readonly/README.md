@@ -61,16 +61,49 @@ O App Registration precisa dos seguintes roles na subscription:
 - **Cost Management Reader** — consulta de custos
 - **Monitoring Reader** — métricas de performance
 
-## Rodando a partir do código
+## Alternativa: usar a partir do clone
+
+Para rodar sem o npm, por exemplo para testar uma mudança no código, clone o repositório e instale as dependências:
 
 ```bash
 git clone https://github.com/vbss-io/vbss-mcps.git
 cd vbss-mcps
 npm install
-node packages/azure-readonly/src/index.js
 ```
 
-Rodando do clone, as variáveis também podem ficar num `.env` em `packages/azure-readonly`.
+Depois aponte o cliente MCP para o arquivo do servidor, usando o caminho absoluto do clone:
+
+```json
+{
+  "mcpServers": {
+    "azure-readonly": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/caminho/para/vbss-mcps/packages/azure-readonly/src/index.js"
+      ],
+      "env": {
+        "AZURE_ORGS": "acme",
+        "AZURE_ACME_TENANT_ID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "AZURE_ACME_CLIENT_ID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "AZURE_ACME_CLIENT_SECRET": "your-client-secret",
+        "AZURE_ACME_SUBSCRIPTION_ID": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+        "AZURE_ACME_LABEL": "Acme Corp"
+      }
+    }
+  }
+}
+```
+
+No Windows, use barras normais no caminho (`C:/Users/voce/vbss-mcps/...`). Se o caminho tiver espaços, edite o JSON direto em vez de usar `claude mcp add`.
+
+As variáveis podem ficar no `env` acima ou num arquivo `.env` em `packages/azure-readonly`, que o servidor lê ao iniciar.
+
+Para conferir que a configuração carrega sem erro, rode direto no terminal. O servidor fica em silêncio esperando o cliente; `Ctrl+C` encerra.
+
+```bash
+node packages/azure-readonly/src/index.js
+```
 
 ## Tools disponíveis
 

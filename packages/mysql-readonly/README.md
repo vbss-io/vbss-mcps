@@ -66,16 +66,46 @@ Use um usuário de banco só leitura. A validação de queries do servidor é um
 
 O certificado TLS é verificado por padrão. Se o servidor usa uma CA própria, aponte o certificado dela com `NODE_EXTRA_CA_CERTS` no `env`. Só em último caso desligue a verificação com `MYSQL_<ORG>_SSL_VERIFY=false`.
 
-## Rodando a partir do código
+## Alternativa: usar a partir do clone
+
+Para rodar sem o npm, por exemplo para testar uma mudança no código, clone o repositório e instale as dependências:
 
 ```bash
 git clone https://github.com/vbss-io/vbss-mcps.git
 cd vbss-mcps
 npm install
-node packages/mysql-readonly/src/index.js
 ```
 
-Rodando do clone, as variáveis também podem ficar num `.env` em `packages/mysql-readonly`.
+Depois aponte o cliente MCP para o arquivo do servidor, usando o caminho absoluto do clone:
+
+```json
+{
+  "mcpServers": {
+    "mysql-readonly": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/caminho/para/vbss-mcps/packages/mysql-readonly/src/index.js"
+      ],
+      "env": {
+        "MYSQL_ORGS": "acme",
+        "MYSQL_ACME_URL": "mysql://readonly:senha@db.acme.com:3306/mydb?ssl=true",
+        "MYSQL_ACME_LABEL": "Acme Corp"
+      }
+    }
+  }
+}
+```
+
+No Windows, use barras normais no caminho (`C:/Users/voce/vbss-mcps/...`). Se o caminho tiver espaços, edite o JSON direto em vez de usar `claude mcp add`.
+
+As variáveis podem ficar no `env` acima ou num arquivo `.env` em `packages/mysql-readonly`, que o servidor lê ao iniciar.
+
+Para conferir que a configuração carrega sem erro, rode direto no terminal. O servidor fica em silêncio esperando o cliente; `Ctrl+C` encerra.
+
+```bash
+node packages/mysql-readonly/src/index.js
+```
 
 ## Tools disponíveis
 
