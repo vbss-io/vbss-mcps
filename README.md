@@ -85,6 +85,13 @@ packages/
     README.md
 ```
 
+## Support
+
+These servers are free and MIT licensed. If they save you time, you can help keep them maintained:
+
+- Buy me a coffee: [buymeacoffee.com/vbss.io](https://www.buymeacoffee.com/vbss.io)
+- GitHub Sponsors: [github.com/sponsors/vbss-io](https://github.com/sponsors/vbss-io)
+
 ## License
 
 [MIT](LICENSE)

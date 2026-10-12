@@ -13,6 +13,16 @@
     "readonly"
   ],
   "license": "MIT",
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/vbss-io"
+    },
+    {
+      "type": "individual",
+      "url": "https://buymeacoffee.com/vbss.io"
+    }
+  ],
   "author": "Vitor Bastos <vitor@vbss.io> (https://vbss.io/)",
   "homepage": "https://github.com/vbss-io/vbss-mcps/tree/main/packages/mysql-readonly#readme",
   "repository": {
